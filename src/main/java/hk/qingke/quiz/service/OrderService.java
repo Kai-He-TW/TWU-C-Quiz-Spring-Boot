@@ -1,19 +1,24 @@
 package hk.qingke.quiz.service;
 
 import hk.qingke.quiz.domain.Order;
+import hk.qingke.quiz.dto.CommodityDto;
 import hk.qingke.quiz.dto.OrderDto;
+import hk.qingke.quiz.repository.CommodityRepository;
 import hk.qingke.quiz.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final CommodityRepository commodityRepository;
 
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, CommodityRepository commodityRepository) {
         this.orderRepository = orderRepository;
+        this.commodityRepository = commodityRepository;
     }
 
 
@@ -31,5 +36,19 @@ public class OrderService {
                 .unit(orderDto.getCommodityDto().getUnit())
                 .size(orderDto.getSize())
                 .build();
+    }
+
+    public void save(Order order) {
+        Optional<CommodityDto> commodityDto = this.commodityRepository.findByName(order.getName());
+        if (!commodityDto.isPresent()) {
+            throw new RuntimeException("commodity is not existed");
+        }
+
+        OrderDto orderDto = OrderDto.builder()
+                .size(order.getSize())
+                .commodityDto(commodityDto.get())
+                .build();
+
+        this.orderRepository.save(orderDto);
     }
 }

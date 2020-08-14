@@ -11,15 +11,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -85,5 +89,48 @@ class OrderControllerTest {
             assertThat(order.getPrice()).isEqualTo(this.commodityDto.getPrice());
             assertThat(order.getUnit()).isEqualTo(this.commodityDto.getUnit());
         }
+    }
+
+    @Test
+    void should_add_commodity_into_order_success() throws Exception {
+        CommodityDto commodityDto = CommodityDto.builder()
+                .name("TEST COMMODITY 2")
+                .price(2.5)
+                .unit("bottle")
+                .imageUrl("TEST:IMAGE:URL")
+                .build();
+        commodityDto = this.commodityRepository.save(commodityDto);
+
+        Order order = Order.builder()
+                .name(commodityDto.getName())
+                .price(commodityDto.getPrice())
+                .unit(commodityDto.getUnit())
+                .size(5)
+                .build();
+
+        String orderJson = this.objectMapper.writeValueAsString(order);
+
+        MockHttpServletRequestBuilder requestBuilder = post("/order").content(orderJson).contentType(MediaType.APPLICATION_JSON);
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isCreated());
+
+        List<OrderDto> orderDtos = this.orderRepository.findAll();
+        assertThat(orderDtos.size()).isEqualTo(16);
+    }
+
+    @Test
+    void should_add_commodity_into_order_fail_when_commodity_is_not_existed() throws Exception {
+        Order order = Order.builder()
+                .name("NOT EXISTED")
+                .price(55.5)
+                .unit("NOT EXISTED")
+                .size(5)
+                .build();
+
+        String orderJson = this.objectMapper.writeValueAsString(order);
+
+        MockHttpServletRequestBuilder requestBuilder = post("/order").content(orderJson).contentType(MediaType.APPLICATION_JSON);
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest());
     }
 }

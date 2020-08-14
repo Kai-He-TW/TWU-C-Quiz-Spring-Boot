@@ -92,6 +92,15 @@ public class CommodityControllerTest {
     }
 
     @Test
+    void should_add_commodity_fail_when_commodity_name_is_existed() throws Exception {
+        String commodityJson = this.objectMapper.writeValueAsString(this.commodityDtos.get("TEST: 1"));
+
+        MockHttpServletRequestBuilder requestBuilder = post("/commodity").content(commodityJson).contentType(MediaType.APPLICATION_JSON);
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void should_add_commodity_fail_when_name_is_null() throws Exception {
         Commodity commodity = Commodity.builder()
                 .name(null)

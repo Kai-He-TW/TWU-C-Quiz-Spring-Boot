@@ -4,10 +4,7 @@ import hk.qingke.quiz.domain.Order;
 import hk.qingke.quiz.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -34,5 +31,15 @@ public class OrderController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/order/{id}")
+    public ResponseEntity<Object> delete(@PathVariable int id) {
+        try {
+            this.orderService.delete(id);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.noContent().build();
     }
 }

@@ -51,4 +51,13 @@ public class OrderService {
 
         this.orderRepository.save(orderDto);
     }
+
+    public void delete(int id) {
+        Optional<OrderDto> orderDto = this.orderRepository.findById(id);
+        if (!orderDto.isPresent()) {
+            throw new RuntimeException("order not existed");
+        }
+
+        this.orderRepository.delete(orderDto.get());
+    }
 }

@@ -20,10 +20,10 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -131,6 +131,25 @@ class OrderControllerTest {
 
         MockHttpServletRequestBuilder requestBuilder = post("/order").content(orderJson).contentType(MediaType.APPLICATION_JSON);
         this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_delete_order_success() throws Exception {
+        for (Map.Entry<String, OrderDto> entry : this.orderDtos.entrySet()) {
+            OrderDto orderDto = entry.getValue();
+
+            this.mockMvc.perform(delete("/order/" + orderDto.getId()))
+                    .andExpect(status().isNoContent());
+
+            Optional<OrderDto> optionalOrderDto = this.orderRepository.findById(orderDto.getId());
+            assertThat(optionalOrderDto.isPresent()).isFalse();
+        }
+    }
+
+    @Test
+    void should_delete_order_fail_when_order_is_not_existed() throws Exception {
+        this.mockMvc.perform(delete("/order/1000"))
                 .andExpect(status().isBadRequest());
     }
 }

@@ -8,24 +8,20 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import java.util.List;
+import javax.persistence.ManyToOne;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class CommodityDto {
+public class OrderDto {
     @Id
     @GeneratedValue
     private int id;
 
-    private String name;
-    private double price;
-    private String unit;
-    private String imageUrl;
+    private int size;
 
-    @OneToMany(mappedBy = "commodityDto")
-    private List<OrderDto> orderDtos;
+    @ManyToOne
+    private CommodityDto commodityDto;
 }

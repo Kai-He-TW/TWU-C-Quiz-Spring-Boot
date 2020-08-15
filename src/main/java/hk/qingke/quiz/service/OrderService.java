@@ -31,6 +31,7 @@ public class OrderService {
 
     private Order dtoToDomain(OrderDto orderDto) {
         return Order.builder()
+                .id(orderDto.getId())
                 .name(orderDto.getCommodityDto().getName())
                 .price(orderDto.getCommodityDto().getPrice())
                 .unit(orderDto.getCommodityDto().getUnit())

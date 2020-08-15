@@ -12,6 +12,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
+    private int id;
+
     @NotNull
     private String name;
 

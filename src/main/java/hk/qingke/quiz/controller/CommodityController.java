@@ -29,11 +29,7 @@ public class CommodityController {
 
     @PostMapping("/commodity")
     public ResponseEntity<Object> save(@RequestBody @Valid Commodity commodity) {
-        try {
-            this.commodityService.save(commodity);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        this.commodityService.save(commodity);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

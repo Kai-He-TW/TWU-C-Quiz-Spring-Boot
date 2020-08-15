@@ -44,6 +44,14 @@ public class OrderService {
             throw new RuntimeException("commodity is not existed");
         }
 
+        Optional<OrderDto> orderDtoOptional = this.orderRepository.findByCommodityDto(commodityDto.get());
+        if (orderDtoOptional.isPresent()) {
+            OrderDto orderDto = orderDtoOptional.get();
+            orderDto.setSize(orderDto.getSize() + order.getSize());
+            this.orderRepository.save(orderDto);
+            return;
+        }
+
         OrderDto orderDto = OrderDto.builder()
                 .size(order.getSize())
                 .commodityDto(commodityDto.get())

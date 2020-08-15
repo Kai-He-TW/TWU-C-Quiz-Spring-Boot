@@ -2,6 +2,7 @@ package hk.qingke.quiz.service;
 
 import hk.qingke.quiz.domain.Commodity;
 import hk.qingke.quiz.dto.CommodityDto;
+import hk.qingke.quiz.exception.CommodityExistException;
 import hk.qingke.quiz.repository.CommodityRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class CommodityService {
         Optional<CommodityDto> commodityDto = this.commodityRepository.findByName(commodity.getName());
 
         if (commodityDto.isPresent()) {
-            throw new RuntimeException("commodity existed");
+            throw new CommodityExistException();
         }
 
         this.commodityRepository.save(this.domainToDto(commodity));

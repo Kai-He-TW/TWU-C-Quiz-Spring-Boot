@@ -24,7 +24,7 @@ public class OrderController {
     }
 
     @PostMapping("/order")
-    public ResponseEntity<Object> addCommodity(@RequestBody @Valid Order order) {
+    public ResponseEntity<Object> save(@RequestBody @Valid Order order) {
         try {
             this.orderService.save(order);
         } catch (RuntimeException e) {
